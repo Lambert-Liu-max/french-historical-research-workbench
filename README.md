@@ -4,7 +4,7 @@
 
 本项目源于阿道夫·兰德里（Adolphe Landry）议会档案与私人档案研究。它不是把所有材料简单交给大模型摘要，而是将历史研究者的判断拆成可标注、可评测、可复核的任务：
 
-1. 从 Gallica 与法国议会官方档案中发现文献和页内命中；
+1. 从 Gallica 与法国议会官方档案中通过多姓名/OCR变体发现文献和页内命中；
 2. 判断人物身份、材料类型和研究相关性；
 3. 将单页命中重建为包含议题、发言和回应关系的历史事件；
 4. 保存原文、页码、ARK、模型响应与人工复核状态，形成完整证据链。
@@ -34,6 +34,8 @@ python3 -m french_history_workbench run \
 ```
 
 加入`--execute`并设置`DEEPSEEK_API_KEY`，即可完成语义判断、翻译和梗概。已经真实执行的产物见[产品样例输出](examples/product_demo/generated_corpus.md)，完整使用方法见[产品使用指南](docs/USING_THE_PRODUCT.md)。
+
+Gallica发现层不是一次关键词搜索：它会生成可审计查询计划，分别组合年份、议院、姓名和OCR变体；完整翻页SRU与ContentSearch；按ARK和扫描页去重；先合并相邻命中再下载上下文；最后离线扫描已经缓存的ALTO，生成漏检复核清单。技术设计与输出文件见[Gallica高召回发现层](docs/GALLICA_DISCOVERY.md)。
 
 ## 为什么需要它
 
@@ -81,6 +83,7 @@ python3 -m french_history_workbench run \
 详见：
 
 - [产品与任务定义](docs/PRODUCT_SPEC.md)
+- [Gallica高召回发现层](docs/GALLICA_DISCOVERY.md)
 - [系统架构与数据流](docs/ARCHITECTURE.md)
 - [Landry真实案例](docs/CASE_STUDY.md)
 - [标注指南](docs/ANNOTATION_GUIDELINES.md)

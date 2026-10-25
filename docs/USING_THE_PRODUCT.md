@@ -47,7 +47,23 @@ python3 -m french_history_workbench discover \
   --execute
 ```
 
-程序依次使用SRU、ContentSearch和ALTO，缓存官方响应，并为每个姓名命中保存前后页。请求间隔写在项目配置中；已有缓存不会重新下载。生成的`demo_project/inputs/gallica_records.jsonl`可直接交给`run`。
+`--limit 5`是快速预览，只处理至多5份文献；正式穷尽检索使用`--limit 0`。程序会：
+
+- 按年份、议院和人物/OCR变体生成可追溯查询；
+- 翻页读取全部SRU结果，并对ARK去重；
+- 使用`startResult`翻完每份文献中最多10条一页的ContentSearch结果；
+- 合并同一期相邻命中，再下载去重后的上下文ALTO；
+- 取得官方印刷页码，并把无法验证、缺页或搜索层不一致的材料写入复核清单。
+
+主要输出：
+
+- `inputs/gallica_records.jsonl`：可直接交给`run`的事件候选；
+- `audit/query_manifest.jsonl`：每条查询及其返回量；
+- `audit/discovery_records.jsonl`：ARK去重后的文献；
+- `audit/miss_review.jsonl`：未被静默删除的检索异常和漏检候选；
+- `audit/discovery_summary.json`：本次检索统计。
+
+请求间隔写在项目配置中；相同URL命中有效缓存时不会重新下载。缓存写入前验证XML并采用原子替换，Cloudflare HTML、空响应和损坏XML不会冒充成功数据。
 
 ## 4. 导入打印件与手稿
 

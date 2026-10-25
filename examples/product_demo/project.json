@@ -14,6 +14,23 @@
     "start_year": 1931,
     "end_year": 1931
   },
+  "discovery": {
+    "chambers": ["Chambre des députés", "Sénat"],
+    "search_terms": [
+      {"text": "Landry", "type": "surname"},
+      {"text": "Adolphe Landry", "type": "full_name"},
+      {"text": "A. Landry", "type": "initial"},
+      {"text": "M. Landry", "type": "parliamentary_title"},
+      {"text": "Landri", "type": "ocr_variant"},
+      {"text": "Landy", "type": "ocr_variant"}
+    ],
+    "ocr_variants": ["Landri", "Landy", "L. Andry"],
+    "sru_page_size": 50,
+    "max_records_per_query": 1000,
+    "event_merge_gap_pages": 4,
+    "network_retries": 3,
+    "retry_backoff_seconds": 3
+  },
   "gallica": {
     "sru_endpoint": "https://gallica.bnf.fr/SRU",
     "title_query": "Journal officiel de la République française. Débats parlementaires",
@@ -21,6 +38,7 @@
     "max_hits_per_document": 10,
     "sru_delay_seconds": 5,
     "content_search_delay_seconds": 5,
+    "pagination_delay_seconds": 20,
     "alto_delay_seconds": 20
   },
   "model": {

@@ -333,41 +333,9 @@ def parse_alto(data: bytes) -> str:
 
 
 def discover_gallica(config_path: Path, project_root: Path, limit: int) -> dict:
-    config = read_json(config_path)
-    g = config["gallica"]
-    research = config["research"]
-    surname = research.get("surname") or research["person"].split()[-1]
-    cache = project_root / "cache/gallica"
-    found: dict[str, dict] = {}
-    for year in range(int(config["period"]["start_year"]), int(config["period"]["end_year"]) + 1):
-        clauses = [f'gallica all "{surname}"', f'gallicapublication_date = "{year}"']
-        if g.get("title_query"):
-            clauses.append(f'dc.title all "{g["title_query"]}"')
-        query = " and ".join(f"({x})" for x in clauses)
-        url = g["sru_endpoint"] + "?" + urlencode({"version": "1.2", "operation": "searchRetrieve", "query": query, "maximumRecords": min(limit, 50), "startRecord": 1})
-        for row in parse_sru(cached_fetch(url, cache / "sru", float(g.get("sru_delay_seconds", 5)))):
-            found[row["ark"]] = row
-            if len(found) >= limit:
-                break
-        if len(found) >= limit:
-            break
-    records = []
-    context = int(g.get("context_pages", 1))
-    for document in list(found.values())[:limit]:
-        identifier = document["ark"].rsplit("/", 1)[-1]
-        search_url = "https://gallica.bnf.fr/services/ContentSearch?" + urlencode({"ark": identifier, "query": surname})
-        hits = parse_content_search(cached_fetch(search_url, cache / "content_search", float(g.get("content_search_delay_seconds", 5))))
-        for hit in hits[: int(g.get("max_hits_per_document", 10))]:
-            pages = []
-            for scan in range(max(1, hit - context), hit + context + 1):
-                alto_url = "https://gallica.bnf.fr/RequestDigitalElement?" + urlencode({"O": identifier, "E": "ALTO", "Deb": scan})
-                text = parse_alto(cached_fetch(alto_url, cache / "alto", float(g.get("alto_delay_seconds", 20))))
-                pages.append({"scan_page": scan, "text": text})
-            records.append({"record_id": f"{identifier}-f{hit}", "source_type": "gallica", **document,
-                            "hit_page": hit, "pages": pages})
-    target = project_root / "inputs/gallica_records.jsonl"
-    write_jsonl(target, records)
-    return {"documents": len(found), "candidate_events": len(records), "output": str(target)}
+    from .gallica import discover
+
+    return discover(read_json(config_path), project_root, document_limit=max(0, limit))
 
 
 def ingest_local(source: Path, output: Path) -> dict:
