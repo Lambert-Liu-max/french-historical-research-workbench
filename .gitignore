@@ -20,4 +20,5 @@ data/raw/
 data/interim/
 data/processed/
 evaluation/results/*/
+demo_runs/
 

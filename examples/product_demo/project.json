@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "project": {
+    "name": "Adolphe Landry：议会中的社会政策实践"
+  },
+  "research": {
+    "person": "Adolphe Landry",
+    "surname": "Landry",
+    "name_variants": ["Adolphe Landry", "M. Landry", "Landry", "M. le ministre du travail"],
+    "question": "Landry如何把人口、家庭与社会政策思想转化为议会中的制度行动？",
+    "keywords": ["population", "natalité", "famille", "allocations familiales", "prévoyance sociale", "travail", "salaire"]
+  },
+  "period": {
+    "start_year": 1931,
+    "end_year": 1931
+  },
+  "gallica": {
+    "sru_endpoint": "https://gallica.bnf.fr/SRU",
+    "title_query": "Journal officiel de la République française. Débats parlementaires",
+    "context_pages": 1,
+    "max_hits_per_document": 10,
+    "sru_delay_seconds": 5,
+    "content_search_delay_seconds": 5,
+    "alto_delay_seconds": 20
+  },
+  "model": {
+    "base_url": "https://api.deepseek.com",
+    "api_key_env": "DEEPSEEK_API_KEY",
+    "name": "deepseek-v4-flash",
+    "thinking": "disabled",
+    "max_tokens": 4000,
+    "rates_usd_per_million_tokens": {
+      "input": 0.14,
+      "output": 0.28
+    }
+  },
+  "vision_model": {
+    "base_url": "https://aihubmix.com/v1",
+    "api_key_env": "AIHUBMIX_API_KEY",
+    "name": "qwen3-vl-plus",
+    "max_tokens": 5000,
+    "timeout_seconds": 900,
+    "rates_usd_per_million_tokens": {
+      "input": 0.137,
+      "output": 1.37
+    }
+  }
+}
+

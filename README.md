@@ -9,6 +9,32 @@
 3. 将单页命中重建为包含议题、发言和回应关系的历史事件；
 4. 保存原文、页码、ARK、模型响应与人工复核状态，形成完整证据链。
 
+## 这首先是一个可运行产品
+
+评测集只是工作台的质量控制模块，不是产品本身。当前MVP接受“研究对象 + 年代 + 问题意识 + 史料”，并产出分级、翻译、梗概、证据定位与复核队列：
+
+```text
+Gallica官方API / 本地档案
+  → OCR或手稿识读路由
+  → 人物与材料类型判断
+  → A/B/C/D研究相关性分级
+  → 事件证据选择、翻译与梗概
+  → corpus.md + 结构化结果 + review_queue
+```
+
+一分钟运行公开样例：
+
+```bash
+export PYTHONPATH="$PWD/src"
+python3 -m french_history_workbench run \
+  --config examples/product_demo/project.json \
+  --input examples/product_demo/records.jsonl \
+  --output demo_runs \
+  --run-id offline-demo
+```
+
+加入`--execute`并设置`DEEPSEEK_API_KEY`，即可完成语义判断、翻译和梗概。已经真实执行的产物见[产品样例输出](examples/product_demo/generated_corpus.md)，完整使用方法见[产品使用指南](docs/USING_THE_PRODUCT.md)。
+
 ## 为什么需要它
 
 传统工作流要求研究者反复尝试关键词、逐条打开结果，并在阅读后才能判断材料价值。项目把这一过程转化为：
