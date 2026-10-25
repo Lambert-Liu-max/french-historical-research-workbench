@@ -21,4 +21,6 @@ data/interim/
 data/processed/
 evaluation/results/*/
 demo_runs/
+archive_runs/
+research_runs/
 

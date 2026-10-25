@@ -32,7 +32,9 @@ def write_json(path: Path, value: Any) -> None:
 
 def write_jsonl(path: Path, values: list[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("".join(json.dumps(x, ensure_ascii=False) + "\n" for x in values), encoding="utf-8")
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text("".join(json.dumps(x, ensure_ascii=False) + "\n" for x in values), encoding="utf-8")
+    tmp.replace(path)
 
 
 def stable_id(value: Any, length: int = 16) -> str:

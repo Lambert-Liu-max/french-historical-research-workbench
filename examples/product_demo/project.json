@@ -62,6 +62,26 @@
       "input": 0.137,
       "output": 1.37
     }
+  },
+  "archive": {
+    "window_size": 10,
+    "window_overlap": 2,
+    "derivative_max_pixels": 2048,
+    "transcription_batch_size": 5,
+    "classes_to_transcribe": ["A", "B", "C"],
+    "boundary_review_enabled": true,
+    "network_attempts": 5,
+    "model_roles": {
+      "boundary_primary": "vision_model",
+      "boundary_review": "vision_model",
+      "transcription_clear": "vision_model",
+      "transcription_difficult": "vision_model"
+    },
+    "budget": {
+      "hard_stop_usd": 5,
+      "reserve_per_boundary_call_usd": 0.5,
+      "reserve_per_transcription_call_usd": 0.5
+    }
   }
 }
 

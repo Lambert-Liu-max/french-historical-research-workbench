@@ -65,7 +65,25 @@ python3 -m french_history_workbench discover \
 
 请求间隔写在项目配置中；相同URL命中有效缓存时不会重新下载。缓存写入前验证XML并采用原子替换，Cloudflare HTML、空响应和损坏XML不会冒充成功数据。
 
-## 4. 导入打印件与手稿
+## 4. 将一批本地扫描从分件处理到研究语料（推荐）
+
+旧式“逐张图片”入口适合单页试验；真实档案盒应使用会先判断历史文件边界的入口：
+
+```bash
+export AIHUBMIX_API_KEY="你的视觉模型密钥"
+export DEEPSEEK_API_KEY="你的语义模型密钥"
+
+python3 -m french_history_workbench archive-run \
+  --config examples/product_demo/project.json \
+  --source /path/to/archive_box \
+  --project demo_archive_project \
+  --run-id box-001 \
+  --execute
+```
+
+它先保护原图并建立哈希清单，再用重叠窗口识别文件边界，明确区分印刷件、打字稿、手稿和混合页，按历史文件分批转写，最后调用现有语义流水线生成 `research_runs/box-001/corpus.md`。相同命令支持断点续跑；只需法文转写时加入 `--skip-semantic`。详见[本地档案与手稿识读](LOCAL_ARCHIVE_HTR.md)。
+
+## 5. 单页导入与识读（兼容入口）
 
 ```bash
 python3 -m french_history_workbench ingest-local \
@@ -80,7 +98,7 @@ python3 -m french_history_workbench transcribe-local \
   --execute
 ```
 
-视觉模型先区分打印件、打字稿、手稿、混合页或不可读页，再进行法文转写；低置信度页面进入人工复核。PDF批量拆页仍由馆藏适配器或外部OCR完成，MVP不会把未处理PDF伪装成已识读文本。
+这个兼容入口逐图处理，不重建跨页文件边界。成批私人档案请使用上一节的 `archive-run`。PDF批量拆页仍由馆藏适配器或外部OCR完成，MVP不会把未处理PDF伪装成已识读文本。
 
 ## 产品边界
 

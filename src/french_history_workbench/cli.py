@@ -4,6 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
+from .archive import run_archive_pipeline
 from .core import discover_gallica, ingest_local, run_pipeline, transcribe_local
 
 
@@ -18,6 +19,11 @@ def parser() -> argparse.ArgumentParser:
     vision = sub.add_parser("transcribe-local", help="Route and transcribe printed/handwritten scans")
     vision.add_argument("--config", type=Path, required=True); vision.add_argument("--input", type=Path, required=True)
     vision.add_argument("--output", type=Path, required=True); vision.add_argument("--execute", action="store_true")
+    archive = sub.add_parser("archive-run", help="Segment and transcribe a folder of archival scans")
+    archive.add_argument("--config", type=Path, required=True); archive.add_argument("--source", type=Path, required=True)
+    archive.add_argument("--project", type=Path, required=True); archive.add_argument("--run-id", required=True)
+    archive.add_argument("--execute", action="store_true", help="Call configured vision and language models")
+    archive.add_argument("--skip-semantic", action="store_true", help="Stop after French transcription")
     run = sub.add_parser("run", help="Classify, translate and render a research corpus")
     run.add_argument("--config", type=Path, required=True); run.add_argument("--input", type=Path, required=True)
     run.add_argument("--output", type=Path, required=True); run.add_argument("--run-id", required=True)
@@ -35,6 +41,13 @@ def main() -> None:
         result = ingest_local(a.source, a.output)
     elif a.command == "transcribe-local":
         result = transcribe_local(a.config, a.input, a.output, a.execute)
+    elif a.command == "archive-run":
+        archive_result = run_archive_pipeline(a.config, a.source, a.project, a.run_id, a.execute)
+        result = {"archive": archive_result}
+        records = Path(archive_result.get("output", "")) if archive_result.get("output") else None
+        if a.execute and not a.skip_semantic and records and records.is_file():
+            semantic = run_pipeline(a.config, records, a.project / "research_runs", a.run_id, True)
+            result["research"] = semantic
     else:
         result = run_pipeline(a.config, a.input, a.output, a.run_id, a.execute)
     print(json.dumps(result, ensure_ascii=False, indent=2))

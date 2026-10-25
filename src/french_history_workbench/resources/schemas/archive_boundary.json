@@ -1,0 +1,34 @@
+{
+  "window": {"first_scan": "string", "last_scan": "string"},
+  "pages": [
+    {
+      "scan_id": "string",
+      "page_type": "document_page|envelope|package_cover|index_card|photo|blank|mixed|uncertain",
+      "script_type": "printed|typed|handwritten|mixed|uncertain|not_applicable",
+      "physical_page_count": 1,
+      "document_local_ids": ["local-1"],
+      "confidence": "high|medium|low",
+      "notes": "string or null"
+    }
+  ],
+  "documents": [
+    {
+      "local_id": "local-1",
+      "included_scans": ["scan.jpg"],
+      "date": "string or null",
+      "author": "string or null",
+      "recipient": "string or null",
+      "document_type": "string or null",
+      "script_type": "printed|typed|handwritten|mixed|uncertain",
+      "boundary_evidence": "string",
+      "boundary_confidence": "high|medium|low",
+      "relevance_level": "A|B|C|D",
+      "relevance_reason": "string",
+      "keywords": ["string"],
+      "needs_review": false
+    }
+  ],
+  "review_items": [
+    {"scan_ids": ["scan.jpg"], "problem_type": "string", "reason": "string"}
+  ]
+}
