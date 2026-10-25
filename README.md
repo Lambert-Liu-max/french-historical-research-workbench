@@ -59,6 +59,8 @@
 - [Landry真实案例](docs/CASE_STUDY.md)
 - [标注指南](docs/ANNOTATION_GUIDELINES.md)
 - [评测方案](docs/EVALUATION_PROTOCOL.md)
+- [30条Pilot结果与错误分析](docs/PILOT_RESULTS.md)
+- [简历与面试表述](docs/RESUME_AND_INTERVIEW.md)
 - [当前能力边界](docs/LIMITATIONS.md)
 
 ## 快速查看
@@ -97,6 +99,8 @@ python3 evaluation/run_benchmark.py \
 ```
 
 当前示例配置使用DeepSeek官方接口，并通过AIHubMix调用千问与GPT。评测入口默认不发起API请求；`--execute`、模型列表和预算上限必须同时由操作者明确给出。正式准确率只计算经研究者签字为`expert_verified`的样本。模型名称和价格只是示例，付费运行前必须按供应商当期信息核对。
+
+已经完成的DeepSeek v1/v2诊断结果见[30条Pilot结果](docs/PILOT_RESULTS.md)。仓库不提交原始API响应，只公开可核查的汇总指标与评测限制。
 
 ## 从现有研究语料重建Pilot（可选）
 

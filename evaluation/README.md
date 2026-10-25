@@ -27,6 +27,10 @@ python3 evaluation/run_benchmark.py \
   --execute
 ```
 
+On macOS the runner can also reuse the existing
+`Landry_Archive_Pipeline_AIHUBMIX` Keychain entry, so the key never needs to be
+written into this repository.
+
 Outputs are isolated under `evaluation/results/<run-id>/`:
 
 - `plan.jsonl`: request hashes and model routing, without archive inputs or keys;

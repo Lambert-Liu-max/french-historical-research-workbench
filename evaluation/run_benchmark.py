@@ -10,11 +10,9 @@ import argparse
 import hashlib
 import json
 import os
-import ssl
+import subprocess
 import sys
 import time
-import urllib.error
-import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -103,6 +101,8 @@ def build_request(case: dict, model: dict, prompt: str, schema: dict, max_tokens
         "max_tokens": max_tokens,
     }
     payload = {"model": model["model"], **common}
+    if model.get("thinking"):
+        payload["thinking"] = {"type": model["thinking"]}
     return payload, digest({"request_without_model": common, "user": user})
 
 
@@ -216,19 +216,29 @@ def estimate_cost(model: dict, usage: dict) -> float:
 
 
 def call_api(url: str, api_key: str, payload: dict, timeout: int) -> dict:
-    request = urllib.request.Request(
-        url,
-        method="POST",
-        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
-        headers={
-            "Authorization": "Bearer " + api_key,
-            "Content-Type": "application/json",
-            "User-Agent": "french-historical-research-workbench-eval/1.0",
-        },
+    proc = subprocess.run(
+        [
+            "/usr/bin/curl", "--silent", "--show-error", "--fail-with-body",
+            "--connect-timeout", "30", "--max-time", str(timeout), url,
+            "-H", "Authorization: Bearer " + api_key,
+            "-H", "Content-Type: application/json",
+            "--data-binary", "@-",
+        ],
+        input=json.dumps(payload, ensure_ascii=False),
+        capture_output=True,
+        text=True,
+        check=False,
     )
-    context = ssl.create_default_context()
-    with urllib.request.urlopen(request, context=context, timeout=timeout) as response:
-        return json.load(response)
+    if proc.returncode != 0:
+        detail = (proc.stderr or proc.stdout).strip().replace(api_key, "[REDACTED]")
+        raise RuntimeError(f"curl exit {proc.returncode}: {detail[:1000]}")
+    if not proc.stdout.strip():
+        raise RuntimeError("curl returned an empty response body")
+    try:
+        return json.loads(proc.stdout)
+    except json.JSONDecodeError as exc:
+        preview = proc.stdout[:300].replace(api_key, "[REDACTED]")
+        raise RuntimeError(f"non-JSON response body: {preview!r}") from exc
 
 
 def response_content(envelope: dict) -> str:
@@ -241,12 +251,29 @@ def response_content(envelope: dict) -> str:
     return message["content"]
 
 
+def resolve_api_key(provider: dict) -> str:
+    """Read a key from the environment, then macOS Keychain without printing it."""
+    key = os.getenv(provider["api_key_environment"], "").strip()
+    if key or not provider.get("keychain_service"):
+        return key
+    result = subprocess.run(
+        [
+            "security", "find-generic-password", "-a", os.environ.get("USER", ""),
+            "-s", provider["keychain_service"], "-w",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return result.stdout.strip() if result.returncode == 0 else ""
+
+
 def execute_call(url: str, api_key: str, payload: dict, timeout: int, attempts: int, retry_base: float) -> tuple[dict, int]:
     last_error: Exception | None = None
     for attempt in range(1, attempts + 1):
         try:
             return call_api(url, api_key, payload, timeout), attempt
-        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ConnectionError, ssl.SSLError) as exc:
+        except (RuntimeError, OSError, TimeoutError, ConnectionError, json.JSONDecodeError) as exc:
             last_error = exc
             if attempt < attempts:
                 time.sleep(retry_base * (2 ** (attempt - 1)))
@@ -319,7 +346,7 @@ def main(argv: list[str] | None = None) -> int:
     for alias, model in models:
         provider = providers[model["provider"]]
         key_name = provider["api_key_environment"]
-        api_key = os.getenv(key_name, "").strip()
+        api_key = resolve_api_key(provider)
         for case in cases:
             payload, content_hash = build_request(case, model, prompt, schema, args.max_tokens)
             request_hash = digest(payload)

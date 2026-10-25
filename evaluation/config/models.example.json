@@ -12,13 +12,15 @@
     },
     "aihubmix": {
       "base_url": "https://aihubmix.com/v1",
-      "api_key_environment": "AIHUBMIX_API_KEY"
+      "api_key_environment": "AIHUBMIX_API_KEY",
+      "keychain_service": "Landry_Archive_Pipeline_AIHUBMIX"
     }
   },
   "models": {
     "deepseek": {
       "provider": "deepseek",
       "model": "deepseek-v4-flash",
+      "thinking": "disabled",
       "input_usd_per_million_tokens": 0.14,
       "cached_input_usd_per_million_tokens": 0.0028,
       "output_usd_per_million_tokens": 0.28
