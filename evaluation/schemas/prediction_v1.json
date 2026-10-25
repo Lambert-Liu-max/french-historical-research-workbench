@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "French Historical Research Workbench prediction v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "sample_id",
+    "identity_status",
+    "material_type",
+    "material_level",
+    "event_ranges",
+    "landry_ranges",
+    "speaker_before_landry",
+    "landry_response_target",
+    "responses_to_landry",
+    "needs_review",
+    "confidence",
+    "reason"
+  ],
+  "properties": {
+    "sample_id": {"type": "string"},
+    "identity_status": {"enum": ["confirmed", "probable", "uncertain", "false"]},
+    "material_type": {"enum": ["formal_speech", "interjection_or_response", "substantive_mention", "proposal_report_committee", "vote_or_attendance", "index_or_toc", "irrelevant_or_ocr_error", "uncertain"]},
+    "material_level": {"enum": ["A", "B", "C", "D"]},
+    "event_ranges": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/range"}
+    },
+    "landry_ranges": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/range"}
+    },
+    "speaker_before_landry": {"type": ["string", "null"]},
+    "landry_response_target": {"type": ["string", "null"]},
+    "responses_to_landry": {"type": "array", "items": {"type": "string"}},
+    "needs_review": {"type": "boolean"},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "reason": {"type": "string"}
+  },
+  "$defs": {
+    "range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scan_start", "start_line", "scan_end", "end_line"],
+      "properties": {
+        "scan_start": {"type": "integer"},
+        "start_line": {"type": "integer", "minimum": 0},
+        "scan_end": {"type": "integer"},
+        "end_line": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

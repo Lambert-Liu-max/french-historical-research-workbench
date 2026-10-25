@@ -1,0 +1,23 @@
+.DS_Store
+.env
+.venv/
+*.log
+__pycache__/
+*.py[cod]
+*.sqlite*
+*.pdf
+*.xml
+
+# Benchmark outputs can contain model responses and archive excerpts.
+evaluation/results/*/
+
+# Never commit private archival projects or bulk source caches.
+Sources/
+State/
+Outputs/
+Knowledge_Base/
+data/raw/
+data/interim/
+data/processed/
+evaluation/results/*/
+

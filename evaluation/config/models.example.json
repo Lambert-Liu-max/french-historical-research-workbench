@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "default_budget_usd": 5.0,
+  "reserve_per_call_usd": 0.25,
+  "timeout_seconds": 300,
+  "max_attempts": 3,
+  "retry_base_seconds": 2,
+  "providers": {
+    "deepseek": {
+      "base_url": "https://api.deepseek.com",
+      "api_key_environment": "DEEPSEEK_API_KEY"
+    },
+    "aihubmix": {
+      "base_url": "https://aihubmix.com/v1",
+      "api_key_environment": "AIHUBMIX_API_KEY"
+    }
+  },
+  "models": {
+    "deepseek": {
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "input_usd_per_million_tokens": 0.14,
+      "cached_input_usd_per_million_tokens": 0.0028,
+      "output_usd_per_million_tokens": 0.28
+    },
+    "qwen": {
+      "provider": "aihubmix",
+      "model": "qwen3-vl-plus",
+      "input_usd_per_million_tokens": 0.137,
+      "output_usd_per_million_tokens": 1.37
+    },
+    "gpt": {
+      "provider": "aihubmix",
+      "model": "gpt-5.6-terra",
+      "input_usd_per_million_tokens": 2.5,
+      "output_usd_per_million_tokens": 15.0
+    }
+  }
+}
