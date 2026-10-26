@@ -37,6 +37,13 @@ python3 -m french_history_workbench run \
 
 本地私人档案不再按孤立图片逐张处理。新的 `archive-run` 入口会先建立原图哈希清单，通过重叠窗口识别历史文件边界，显式区分印刷件、打字稿、手稿和混合页，再按文件分批转写并接入同一套语义、翻译和 Markdown 流水线。设计与诚实能力边界见[本地档案与手稿识读](docs/LOCAL_ARCHIVE_HTR.md)。
 
+## 两个真实案例
+
+- [1931年议会事件](examples/public/complete_event_1931.md)：展示从人物命中到完整议题、Landry发言、回应关系、法中对照与出处；
+- [1952年三页私人档案手稿](examples/public/local_archive_manuscript_case.md)：展示自动分件、手稿转写、问题意识分级、翻译和疑难项复核。
+
+真实运行规模、诊断指标与不能宣称的内容统一列在[项目成绩单](docs/PROJECT_SCORECARD.md)中。私人档案原图因馆藏权利不进入公开仓库，这一限制不会被包装成“公开可复现的手稿准确率”。
+
 Gallica发现层不是一次关键词搜索：它会生成可审计查询计划，分别组合年份、议院、姓名和OCR变体；完整翻页SRU与ContentSearch；按ARK和扫描页去重；先合并相邻命中再下载上下文；最后离线扫描已经缓存的ALTO，生成漏检复核清单。技术设计与输出文件见[Gallica高召回发现层](docs/GALLICA_DISCOVERY.md)。
 
 ## 为什么需要它
@@ -92,6 +99,7 @@ Gallica发现层不是一次关键词搜索：它会生成可审计查询计划�
 - [标注指南](docs/ANNOTATION_GUIDELINES.md)
 - [评测方案](docs/EVALUATION_PROTOCOL.md)
 - [30条Pilot结果与错误分析](docs/PILOT_RESULTS.md)
+- [项目成绩单与证据等级](docs/PROJECT_SCORECARD.md)
 - [简历与面试表述](docs/RESUME_AND_INTERVIEW.md)
 - [当前能力边界](docs/LIMITATIONS.md)
 
